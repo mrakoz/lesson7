@@ -14,6 +14,9 @@ import { Button, Form, DropdownButton, Dropdown, Col } from "react-bootstrap";
   Чтобы перевести, например, на немецкий слово Cancel, нужно достать значение
   dictionaries.de['Cancel']
 */
+
+
+
 const dictionaries = {
   en: {
     Cancel: "Cancel",
@@ -31,6 +34,7 @@ const dictionaries = {
   }
 };
 
+const LocalizedContext = React.createContext(dictionaries);
 const languages = ["EN", "DE", "RU"];
 
 /*
@@ -40,7 +44,19 @@ const languages = ["EN", "DE", "RU"];
   Если перевода нет, как, например, для Clear на немецком, должна показываться
   оригинальная строка на английском.
 */
-const LocalizedText = ({ children }) => children;
+
+const LocalizedText = ({children}) => (
+  <LocalizedContext.Consumer>
+    {language => {
+  let lang = language.toLowerCase();
+  if (!dictionaries[lang][children]) {
+    return children;
+  } else 
+  return (<>{dictionaries[lang][children]}</>)
+    }
+  }
+  </LocalizedContext.Consumer>
+);
 
 LocalizedText.propTypes = {
   children: PropTypes.string.isRequired
@@ -105,6 +121,7 @@ class LocalizedApp extends React.Component {
   render() {
     return (
       <>
+       <LocalizedContext.Provider value={this.state.language}>
         <Col>
           <LanguageSelector
             languages={languages}
@@ -115,6 +132,7 @@ class LocalizedApp extends React.Component {
         <Col>
           <UserForm />
         </Col>
+        </LocalizedContext.Provider>
       </>
     );
   }
