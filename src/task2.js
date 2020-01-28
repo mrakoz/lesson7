@@ -7,6 +7,23 @@ import { Col, Form } from "react-bootstrap";
 */
 
 class State extends React.Component {
+  constructor(props) {
+    super(props);
+    var isPlainObject = function(obj) {
+      return Object.prototype.toString.call(obj) === "[object Object]";
+    };
+
+    if (!isPlainObject(this.props.initialState)) {
+      this.state = { value: this.props.initialState };
+    } else {
+      this.state = { ...this.props.initialState };
+    }
+    if (!this.props.initialState) {
+      this.state = {};
+    }
+
+  }
+
   render() {
     return this.props.children({
       /* 
@@ -21,11 +38,14 @@ class State extends React.Component {
         (массивов, функций, Date и т.п.) воспользуйтесь функцией isPlainObject 
         (https://gomakethings.com/how-to-check-if-something-is-an-object-with-vanilla-javascript/)
       */
-      state: {},
-      setState: () => {}
+      state : this.state,
+      setState: state => {
+        this.setState(this.state = state);
+      }
     });
   }
 }
+
 
 /*
   Следующие компоненты для выполнения задания менять не нужно.
