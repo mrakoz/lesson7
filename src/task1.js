@@ -9,15 +9,29 @@ import { UserForm } from "./UserForm";
   Ваша задача реализовать функции save и load.
 */
 
-function save() {
+function IsJsonObj(obj) {
+  try {
+    JSON.stringify(obj);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+function save(key, value) {
   /*
     Эта функция сохраняет переданное знчаение в localStorage.
     Ключ, куда сохранять тоже должен быть аргументом функции.
     Yе забывайте, что объекты нужно предварительно трансформировать в строку с помощью JSON.stringify.
   */
+  if (IsJsonObj(value)) {
+    let str = JSON.stringify(value);
+    return localStorage.setItem(key, str);
+  }
+  return localStorage.setItem(key, value);
 }
 
-function load() {
+function load(key) {
   /*
     Эта функция читает из localStorage значение, хранящееся по переданному в качестве аргумента ключу.
     Не забывайте, что:
@@ -25,6 +39,16 @@ function load() {
     - там может храниться объект в JSON, который надо предварительно трансформировать в объект JS при
       помощи JSON.parse.
   */
+  console.log(`Value of key "${key}" is: ${localStorage.getItem(key)}`);
+  if (localStorage.getItem(key) === null) {
+    localStorage.setItem(key, "");
+  }
+  try {
+    JSON.parse(localStorage.getItem(key));
+  } catch (e) {
+    return localStorage.getItem(key);
+  }
+  return JSON.parse(localStorage.getItem(key));
 }
 
 const LocalStorage = ({ children }) => children({ save, load });
